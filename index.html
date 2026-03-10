@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gibsonville Tobacco & Vape</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d0b09;
+    --surface: #141210;
+    --surface2: #1c1916;
+    --accent: #c8883a;
+    --accent2: #e8b56a;
+    --text: #f0ece4;
+    --muted: #6e6558;
+    --border: rgba(200,136,58,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,136,58,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.12s ease, left 0.08s ease, top 0.08s ease;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 48px;
+    background: linear-gradient(to bottom, rgba(13,11,9,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent2);
+  }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent2); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  /* Grain overlay */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  /* Radial glow */
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,136,58,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  /* EYES */
+  .eyes-container {
+    display: flex; gap: 60px; align-items: center;
+    margin-bottom: 48px;
+    position: relative; z-index: 2;
+  }
+
+  .eye-wrap {
+    position: relative;
+    width: 130px; height: 70px;
+  }
+
+  .eye {
+    width: 130px; height: 70px;
+    background: #fdf6ed;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 40px rgba(200,136,58,0.25),
+      inset 0 -4px 12px rgba(0,0,0,0.2);
+    animation: blink 5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.05); }
+  }
+
+  .iris {
+    width: 52px; height: 52px;
+    background: radial-gradient(circle at 35% 35%, #8b5e1a, #3d2600 60%, #1a0f00);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease-out;
+    box-shadow: inset 0 0 14px rgba(0,0,0,0.8);
+  }
+
+  .pupil {
+    width: 24px; height: 24px;
+    background: radial-gradient(circle at 38% 35%, #444, #000);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease-out;
+  }
+
+  .pupil::after {
+    content: '';
+    width: 6px; height: 6px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    position: absolute;
+    top: 4px; left: 5px;
+  }
+
+  .eyelid-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 50%;
+    background: var(--bg);
+    border-radius: 0 0 50% 50%;
+    transform-origin: top center;
+    transform: scaleY(0);
+    animation: eyelid-blink 5s ease-in-out infinite;
+    z-index: 2;
+  }
+  @keyframes eyelid-blink {
+    0%, 90%, 100% { transform: scaleY(0); }
+    95% { transform: scaleY(1); }
+  }
+
+  /* Eyelashes */
+  .lash {
+    position: absolute; top: -2px;
+    width: 2px;
+    background: var(--bg);
+    transform-origin: bottom center;
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* HERO TEXT */
+  .hero-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease 0.4s both;
+    color: var(--text);
+  }
+
+  .hero-title span {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 0.88rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+
+  .hero-divider {
+    width: 60px; height: 1px;
+    background: var(--accent);
+    margin: 28px auto;
+    position: relative; z-index: 2;
+    animation: expand 1.2s ease 0.8s both;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid var(--border);
+    padding: 14px 36px;
+    text-decoration: none;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease 1s both;
+    transition: background 0.3s, color 0.3s;
+  }
+  .hero-cta:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: fadeIn 2s ease 1.5s both;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+    animation: scrollDrop 2s ease-in-out infinite;
+  }
+  @keyframes scrollDrop {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--accent);
+    padding: 12px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-item {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--bg);
+    font-weight: 500;
+    padding: 0 40px;
+  }
+  .marquee-dot { opacity: 0.5; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  /* PRODUCTS */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 56px;
+  }
+
+  .product-card {
+    background: var(--surface);
+    padding: 40px 32px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .product-card:hover { background: var(--surface2); }
+  .product-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .product-card:hover::after { transform: scaleX(1); }
+
+  .product-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .product-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* THCA banner */
+  .thca-banner {
+    border: 1px solid rgba(100,200,120,0.2);
+    background: rgba(80,160,100,0.04);
+    padding: 20px 28px;
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .thca-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #6ecf85;
+    border: 1px solid rgba(110,207,133,0.3);
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+  .thca-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* THCA card accent */
+  .thca-card::after {
+    background: #6ecf85 !important;
+  }
+  .thca-card .product-name { color: #a8e8b5; }
+
+  /* Specialty card accent */
+  .specialty-card::after {
+    background: #d4a0c8 !important;
+  }
+  .specialty-card .product-name { color: #e8c8e0; }
+
+  /* INFO BAND */
+  .info-band {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .info-band-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 64px 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .info-block {
+    background: var(--surface);
+    padding: 40px 48px;
+  }
+  .info-block-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .info-block-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+  .info-block-sub {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* AGE BANNER */
+  .age-banner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+  .age-inner {
+    border: 1px solid var(--border);
+    padding: 28px 36px;
+    display: flex; align-items: center; gap: 24px;
+    background: rgba(200,136,58,0.03);
+  }
+  .age-badge {
+    min-width: 60px; height: 60px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .age-text {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    max-width: 1100px;
+    margin: 64px auto 0;
+    display: flex;
+    align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+  }
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes expand {
+    from { width: 0; }
+    to { width: 60px; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .products-grid { grid-template-columns: 1fr; }
+    .info-band-inner { grid-template-columns: 1fr; padding: 0; }
+    .info-block { padding: 32px 24px; }
+    .eyes-container { gap: 30px; }
+    .eye-wrap, .eye { width: 90px; height: 48px; }
+    .iris { width: 36px; height: 36px; }
+    .pupil { width: 16px; height: 16px; }
+    footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
+    .age-banner { padding: 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">GTV</div>
+    <ul class="nav-links">
+        <li><a href="#products">Products</a></li>
+        <li><a href="#visit-page">Visit</a></li> <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home" style="max-width:100%;padding:0;">
+  <div class="hero-glow"></div>
+
+  <!-- ANIMATED EYES -->
+  <div class="eyes-container" id="eyesContainer">
+    <!-- LEFT EYE -->
+    <div class="eye-wrap">
+      <div class="eye" id="eyeLeft">
+        <div class="iris" id="irisLeft">
+          <div class="pupil"></div>
+        </div>
+        <div class="eyelid-top"></div>
+      </div>
+    </div>
+    <!-- RIGHT EYE -->
+    <div class="eye-wrap">
+      <div class="eye" id="eyeRight">
+        <div class="iris" id="irisRight">
+          <div class="pupil"></div>
+        </div>
+        <div class="eyelid-top"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-label">Est. Gibsonville, NC</div>
+  <h1 class="hero-title">Tobacco<br /><span>&amp; Vape</span></h1>
+  <p class="hero-sub">Gibsonville's Premier Smoke Shop</p>
+  <div class="hero-divider"></div>
+  <a href="#products" class="hero-cta">Explore Products</a>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Premium Tobacco</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">THCA Flower</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Vape &amp; E-Liquid</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">THCA Disposables</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Cigars</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Pre-Rolls</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Rolling Papers</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Edibles</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Grinders</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Cartridges</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Pipes &amp; More</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Premium Tobacco</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">THCA Flower</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Vape &amp; E-Liquid</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">THCA Disposables</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Cigars</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Pre-Rolls</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Rolling Papers</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Edibles</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Grinders</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Cartridges</span>
+    <span class="marquee-item marquee-dot">◆</span>
+    <span class="marquee-item">Pipes &amp; More</span>
+    <span class="marquee-item marquee-dot">◆</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-label">What We Carry</div>
+  <h2 class="section-title">Our Products</h2>
+  <p style="color:var(--muted);font-size:0.88rem;line-height:1.8;max-width:480px;">
+    We stock a curated selection of tobacco, vaping, THCA, and specialty products — all under one roof.
+  </p>
+
+  <!-- Tobacco & Vape sub-label -->
+  <div class="section-label" style="margin-top:48px;">Tobacco &amp; Vape</div>
+  <div class="products-grid">
+    <div class="product-card">
+      <span class="product-icon">🚬</span>
+      <div class="product-name">Cigarettes &amp; Tobacco</div>
+      <p class="product-desc">Full range of premium cigarettes, loose-leaf tobacco, and rolling supplies from trusted brands.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">💨</span>
+      <div class="product-name">Vapes &amp; E-Liquids</div>
+      <p class="product-desc">Disposable vapes, pod systems, mods, and a wide selection of e-liquid flavors.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">🍂</span>
+      <div class="product-name">Cigars</div>
+      <p class="product-desc">Premium cigars for every occasion — from everyday smokes to special-occasion selections.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">🪈</span>
+      <div class="product-name">Pipes &amp; Hookahs</div>
+      <p class="product-desc">Pipes, pipe tobacco, hookah sets, and shisha in a variety of styles and flavors.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">📜</span>
+      <div class="product-name">Rolling Papers</div>
+      <p class="product-desc">Wide selection of rolling papers, wraps, cones, and filters from top brands.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">⚙️</span>
+      <div class="product-name">Grinders &amp; Accessories</div>
+      <p class="product-desc">Grinders, lighters, cases, trays, and everything else you need.</p>
+    </div>
+  </div>
+
+  <!-- THCA -->
+  <div class="section-label" style="margin-top:64px;">THCA Products</div>
+  <div class="thca-banner">
+    <div class="thca-tag">Hemp-Derived · Federally Compliant</div>
+    <p class="thca-desc">We carry a premium selection of THCA products sourced from quality hemp. All products comply with the 2018 Farm Bill.</p>
+  </div>
+  <div class="products-grid" style="margin-top:24px;">
+    <div class="product-card thca-card">
+      <span class="product-icon">🌿</span>
+      <div class="product-name">THCA Flower</div>
+      <p class="product-desc">Top-shelf THCA hemp flower in a variety of strains — indica, sativa, and hybrid.</p>
+    </div>
+    <div class="product-card thca-card">
+      <span class="product-icon">🔥</span>
+      <div class="product-name">Pre-Rolls</div>
+      <p class="product-desc">Ready-to-smoke THCA pre-rolls, singles and multi-packs, for your convenience.</p>
+    </div>
+    <div class="product-card thca-card">
+      <span class="product-icon">💨</span>
+      <div class="product-name">THCA Disposables</div>
+      <p class="product-desc">Rechargeable and disposable THCA vape pens in multiple strains and flavors.</p>
+    </div>
+    <div class="product-card thca-card">
+      <span class="product-icon">🛢️</span>
+      <div class="product-name">Cartridges</div>
+      <p class="product-desc">510-thread THCA cartridges compatible with most standard vape batteries.</p>
+    </div>
+    <div class="product-card thca-card">
+      <span class="product-icon">🍬</span>
+      <div class="product-name">Edibles</div>
+      <p class="product-desc">THCA-infused gummies, chocolates, and other edibles in a range of strengths.</p>
+    </div>
+    <div class="product-card thca-card">
+      <span class="product-icon">⚙️</span>
+      <div class="product-name">Grinders</div>
+      <p class="product-desc">Quality herb grinders in 2-piece and 4-piece options — aluminum and acrylic.</p>
+    </div>
+  </div>
+
+  <!-- Specialty -->
+  <div class="section-label" style="margin-top:64px;">Specialty &amp; Wellness</div>
+  <div class="products-grid">
+    <div class="product-card specialty-card">
+      <span class="product-icon">💊</span>
+      <div class="product-name">Male Enhancement Pills</div>
+      <p class="product-desc">A selection of trusted male enhancement supplements available over the counter in-store.</p>
+    </div>
+    <div class="product-card specialty-card">
+      <span class="product-icon">🍯</span>
+      <div class="product-name">Honey &amp; Honey Products</div>
+      <p class="product-desc">Enhancement honey packets and specialty honey products — a customer favorite.</p>
+    </div>
+    <div class="product-card">
+      <span class="product-icon">✨</span>
+      <div class="product-name">New Arrivals</div>
+      <p class="product-desc">We're always updating our inventory. Stop in and ask what's new — we love talking product.</p>
+    </div>
+  </div>
+</section>
+
+<!---  Visit page for Star!!!!!!  -->
+
+<section id="visit-page" style="border-top: 1px solid var(--border);">
+  <div class="section-label">Visit Us</div>
+  <h2 class="section-title">In the Heart of <br><span>Gibsonville</span></h2>
+  
+  <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 64px; margin-top: 48px;" class="visit-layout">
+    
+    <div class="visit-content">
+      <p style="color:var(--text); font-size: 1.1rem; line-height: 1.6; margin-bottom: 24px;">
+        Located at <strong>204 W Main St</strong>, Gibsonville Tobacco & Vape sits in the historic heart of "The City of Roses." 
+      </p>
+      
+      <div class="amenity-item" style="margin-bottom: 32px;">
+        <h4 style="color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 8px;">The Elon Connection</h4>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.7;">
+          Just a 4-minute drive from <strong>Elon University</strong>. Whether you're a student looking for a study-break vape or a resident enjoying the downtown atmosphere, we are the closest premier destination for quality tobacco and THCA.
+        </p>
+      </div>
+
+      <div class="amenity-item" style="margin-bottom: 32px;">
+        <h4 style="color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 8px;">Downtown Amenities</h4>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.7;">
+          Make a day of it. We are steps away from Gibsonville's best spots—grab a coffee at <strong>The Hive</strong>, a bite at <strong>Tony's</strong> for some Hot Dog pizza, or watch the trains go by at the public green.
+        </p>
+      </div>
+
+      <a href="https://www.google.com/maps/dir/?api=1&destination=204+W+Main+St+Gibsonville+NC+27249" target="_blank" class="hero-cta" style="animation: none; margin-top: 10px;">
+        Open in Google Maps
+      </a>
+    </div>
+
+    <div class="visit-gallery" style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="gallery-frame" style="border: 1px solid var(--border); padding: 10px; background: var(--surface);">
+         <div style="width: 100%; height: 250px; background: #222; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;">
+           [Exterior Photo: Main St View]
+         </div>
+      </div>
+      <div class="gallery-frame" style="border: 1px solid var(--border); padding: 10px; background: var(--surface);">
+         <div style="width: 100%; height: 200px; background: #222; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;">
+           [Interior: Cigar & Vape Lounge]
+         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 768px) {
+    .visit-layout {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+    .visit-gallery {
+      order: -1; /* Put photos above text on mobile */
+    }
+  }
+</style>
+
+<!-- INFO BAND -->
+<div class="info-band" id="visit">
+  <div class="info-band-inner">
+    <div class="info-block">
+      <div class="info-block-label">Location</div>
+      <div class="info-block-value">Gibsonville,<br />North Carolina</div>
+      <div class="info-block-sub">Serving the greater Gibsonville &amp; Burlington area</div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Hours</div>
+      <div class="info-block-value">Mon – Sat<br />9am – 9pm</div>
+      <div class="info-block-sub">Sunday: 11am – 6pm</div>
+    </div>
+    <div class="info-block" id="contact">
+      <div class="info-block-label">Get in Touch</div>
+      <div class="info-block-value" style="font-size:1.1rem;">Stop by<br />and see us</div>
+      <div class="info-block-sub">Friendly staff ready to help<br />you find exactly what you need.</div>
+    </div>
+  </div>
+</div>
+
+<!-- AGE NOTICE -->
+<div class="age-banner" style="margin-top:64px;">
+  <div class="age-inner">
+    <div class="age-badge">21+</div>
+    <p class="age-text">
+      All tobacco and vape products are restricted to customers 21 years of age and older. Valid government-issued ID required for all purchases. We comply fully with North Carolina state law and federal regulations.
+    </p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Gibsonville Tobacco &amp; Vape</div>
+  <div class="footer-copy">© 2025 · Gibsonville, NC · All rights reserved</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 5 + 'px';
+    cursor.style.top = my - 5 + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx - 18) * 0.12;
+    ry += (my - ry - 18) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Eye tracking
+  const eyes = [
+    { eye: document.getElementById('eyeLeft'), iris: document.getElementById('irisLeft') },
+    { eye: document.getElementById('eyeRight'), iris: document.getElementById('irisRight') },
+  ];
+
+  function trackEyes(e) {
+    eyes.forEach(({ eye, iris }) => {
+      const rect = eye.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const angle = Math.atan2(dy, dx);
+      const dist = Math.min(Math.hypot(dx, dy), 18);
+      const ox = Math.cos(angle) * dist * 0.5;
+      const oy = Math.sin(angle) * dist * 0.4;
+      iris.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px))`;
+    });
+  }
+
+  document.addEventListener('mousemove', trackEyes);
+
+  // Mobile: eyes follow touch
+  document.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    trackEyes({ clientX: t.clientX, clientY: t.clientY });
+  });
+
+  // Random idle eye movement
+  function idleLook() {
+    const ox = (Math.random() - 0.5) * 10;
+    const oy = (Math.random() - 0.5) * 6;
+    eyes.forEach(({ iris }) => {
+      iris.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px))`;
+    });
+    setTimeout(idleLook, 2000 + Math.random() * 3000);
+  }
+  // Start idle only if no recent mouse movement
+  let lastMove = 0;
+  document.addEventListener('mousemove', () => { lastMove = Date.now(); });
+  setInterval(() => {
+    if (Date.now() - lastMove > 3000) idleLook();
+  }, 3500);
+</script>
+</body>
+</html>
